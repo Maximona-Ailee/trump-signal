@@ -1,3 +1,10 @@
+---
+license: mit
+---
+# Trump Pulse Data
+
+SQLite database with Trump Truth Social posts and climate events.
+
 # trump-signal# 🚀 TrumpPulse — MLOps Semester Project
 
 ## 👥 Group Members
