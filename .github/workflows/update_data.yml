@@ -29,41 +29,5 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python backend_database/daily_update.py --once
-      
-      - name: Debug - Locate database file
-        run: |
-          echo "Searching for trump_data.db..."
-          find . -name "trump_data.db" -type f 2>/dev/null || echo "File not found"
-          echo "Current directory:"
-          pwd
-          ls -la
 
-      - name: Upload database to Hugging Face Dataset
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          python -c "
-          import os
-          from pathlib import Path
-          from huggingface_hub import HfApi
-
-          # Find trump_data.db anywhere in the current directory tree
-          db_file = None
-          for path in Path('.').rglob('trump_data.db'):
-              if path.is_file():
-                  db_file = str(path)
-                  break
-
-          if not db_file:
-              raise FileNotFoundError('trump_data.db not found in repository')
-
-          print(f'Found database at: {db_file}')
-          api = HfApi()
-          api.upload_file(
-              path_or_fileobj=db_file,
-              path_in_repo='trump_data.db',
-              repo_id='Rogersurf/trump_pulse_data',
-              repo_type='dataset'
-          )
-          print('✅ Database uploaded successfully')
-          "
+      # Upload step removed – not required for team access
