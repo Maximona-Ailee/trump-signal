@@ -37,7 +37,18 @@ except Exception as e:
 
 
 def is_api_alive() -> bool:
-    return _USE_REAL
+    """Perform a real HTTP health check against the running API with retries."""
+    import time
+    max_retries = 20   # Try for ~60 seconds (20 * 3s)
+    for _ in range(max_retries):
+        try:
+            r = requests.get(f"{API_URL}/", timeout=2)
+            if r.status_code == 200 and r.json().get("status") == "running":
+                return True
+        except Exception:
+            pass
+        time.sleep(3)
+    return False
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -27,7 +27,7 @@ RUN python backend_database/init_db.py --db-path $TRUMPPULSE_DATA_DIR/trump_data
 
 
 # Build initial embeddings into ChromaDB (only if the collection is empty)
-RUN python backend_database/build_embeddings.py
+# RUN python backend_database/build_embeddings.py
 
 EXPOSE 8000 7860
 
