@@ -388,7 +388,7 @@ class TrumpDataClient:
             "dia_5min_pct", "dia_1hr_pct",
         ]]
 
-        def get_stock_series(self, index: str = "sp500", days: int = 30) -> pd.DataFrame:
+    def get_stock_series(self, index: str = "sp500", days: int = 30) -> pd.DataFrame:
         """
         Return stock series data for the given index.
         Uses 5-min % change for sp500/qqq/dia, and daily close prices for others.
