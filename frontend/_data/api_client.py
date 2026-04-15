@@ -159,11 +159,23 @@ def get_pipeline_status() -> dict:
 def get_artifact_log() -> pd.DataFrame:
     """Fetch artifact log from the API."""
     try:
-        r = requests.get(f"{API_URL}/pipeline/logs", timeout=5)
+        r = requests.get(f"{API_URL}/pipeline/status", timeout=5)
         if r.status_code == 200:
             data = r.json()
-            if data:
-                return pd.DataFrame(data)
+            return pd.DataFrame([{
+                "timestamp": data.get("last_update", "N/A"),
+                "stage":     "daily_update",
+                "rows":      data.get("total_posts", 0),
+                "duration_s": 0,
+                "status":    "ok" if data.get("status") == "healthy" else "error"
+            }])
     except Exception as e:
         print(f"[api_client] get_artifact_log error: {e}")
-    return pd.DataFrame()
+    return pd.DataFrame([{
+        "timestamp": "N/A",
+        "stage": "not connected",
+        "rows": 0,
+        "duration_s": 0,
+        "status": "error"
+    }])
+
