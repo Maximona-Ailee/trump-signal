@@ -163,7 +163,7 @@ def get_artifact_log() -> pd.DataFrame:
         if r.status_code == 200:
             data = r.json()
             return pd.DataFrame([{
-                "timestamp": data.get("last_update", "N/A"),
+                "timestamp": data.get("last_ingest", "N/A"),
                 "stage":     "daily_update",
                 "rows":      data.get("total_posts", 0),
                 "duration_s": 0,
