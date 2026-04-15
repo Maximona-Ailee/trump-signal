@@ -101,7 +101,8 @@ def render(T: dict):
     show_cols = ["date","time","text","sentiment","sentiment_score",
                  "dominant_category","engagement_score",
                  "sp500_5min_before","sp500_5min_after","market_impact_pct"]
-    st.dataframe(raw[show_cols], use_container_width=True, hide_index=True)
+    available_cols = [c for c in show_cols if c in raw.columns]
+    st.dataframe(raw[available_cols], use_container_width=True, hide_index=True)
     st.download_button(
         f"⬇️ {T['download_csv']}", raw.to_csv(index=False),
         "trumpsignal_processed.csv", "text/csv",
