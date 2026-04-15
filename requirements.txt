@@ -15,4 +15,4 @@ pytest
 httpx
 apscheduler
 httpx
-websockets
+websocketsxgboost
