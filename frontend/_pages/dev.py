@@ -91,7 +91,7 @@ def render(T: dict):
     st.subheader(T["raw_data"])
     st.caption(
         # REPLACE: pd.read_parquet(status['artifact_path'])
-        "Mock data — replace with real parquet load"
+        "Live data from SQLite database"
     )
     raw = get_posts()
     show_cols = ["date","time","text","sentiment","sentiment_score",
