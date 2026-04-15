@@ -1,5 +1,7 @@
 """FastAPI application for TrumpPulse."""
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+import math
 from pydantic import BaseModel
 import sqlite3
 from datetime import datetime, timezone
@@ -208,8 +210,10 @@ def get_posts(start_date: str = None, end_date: str = None):
         if "post_type" not in df.columns:
             df["post_type"] = "original"
         
+        import json, math
         records = df.to_dict(orient="records")
-        return records
+        clean = [{k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()} for r in records]
+        return clean
     except Exception as e:
         return {"error": str(e)}
 
