@@ -241,13 +241,13 @@ def pipeline_status():
         client = TrumpDataClient(DEFAULT_DB_PATH)
         kpis = client.get_kpis()
         return {
-            "last_ingest": "daily @ 02:00 UTC (APScheduler)",
+            "last_ingest": "daily @ 00:00 UTC (APScheduler)",
             "last_preprocess": "on ingest",
             "last_sentiment_run": "pre-labeled in dataset",
-            "last_embedding_build": "on ingest (ChromaDB)",
+            "last_embedding_build": "on ingest",
             "last_gdelt_update": "weekly",
             "total_posts": int(kpis.get("total_posts", 0)),
-            "posts_today": 0,
+            "posts_today": int(kpis.get("posts_today", 0)),
             "pct_market_hours": round(float(kpis.get("pct_market_hours", 0)), 1),
             "model_name": "cardiffnlp/twitter-roberta-base-sentiment",
             "embedding_model": "all-MiniLM-L6-v2",
