@@ -9,12 +9,12 @@ def render(T: dict):
 
     status = get_pipeline_status()
 
-    if status["status"] == "healthy":
+    if status.get("status", "error") == "healthy":
         st.success(f"✅ {T['all_healthy']}")
     else:
         st.error(f"❌ {T['error_detected']}")
         if status.get("errors"):
-            for e in status["errors"]:
+            for e in status.get("errors", []):
                 st.code(e)
 
     # ── Metrics ───────────────────────────────────────────────────────────────
@@ -33,10 +33,10 @@ def render(T: dict):
     # ── Pipeline run times ────────────────────────────────────────────────────
     st.subheader(T["pipeline_status"])
     stages = {
-        "ingest":     status["last_ingest"],
-        "preprocess": status["last_preprocess"],
-        "sentiment":  status["last_sentiment_run"],
-        "embeddings": status["last_embedding_build"],
+        "ingest":     status.get("last_ingest", "N/A"),
+        "preprocess": status.get("last_preprocess", "N/A"),
+        "sentiment":  status.get("last_sentiment_run", "N/A"),
+        "embeddings": status.get("last_embedding_build", "N/A"),
     }
     for stage, ts in stages.items():
         st.markdown(f"- **{stage}** → `{ts}`")
@@ -48,12 +48,12 @@ def render(T: dict):
     mc1, mc2 = st.columns(2)
     with mc1:
         st.info(
-            f"**Sentiment**\n\n`{status['model_name']}`\n\n"
+            f"**Sentiment**\n\n`{status.get('model_name', 'N/A')}`\n\n"
             "Source: pre-labeled in dataset · RoBERTa fine-tuned on Twitter"
         )
     with mc2:
         st.info(
-            f"**Semantic Search**\n\n`{status['embedding_model']}`\n\n"
+            f"**Semantic Search**\n\n`{status.get('embedding_model', 'N/A')}`\n\n"
             "Dim: 384 · ChromaDB cosine similarity · built on ingest"
         )
 
@@ -61,7 +61,7 @@ def render(T: dict):
 
     # ── Artifact log ──────────────────────────────────────────────────────────
     st.subheader(T["artifact_log"])
-    st.caption(f"Source: `{status['artifact_path']}`")
+    st.caption(f"Source: `{status.get('artifact_path', 'N/A')}`")
 
     log_df = get_artifact_log()
     log_df["status_icon"] = log_df["status"].map(
@@ -90,7 +90,7 @@ def render(T: dict):
     # ── Raw data ──────────────────────────────────────────────────────────────
     st.subheader(T["raw_data"])
     st.caption(
-        # REPLACE: pd.read_parquet(status['artifact_path'])
+        # REPLACE: pd.read_parquet(status.get('artifact_path', 'N/A'))
         "Live data from SQLite database"
     )
     raw = get_posts()
