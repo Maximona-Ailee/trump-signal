@@ -1,3 +1,12 @@
+---
+title: TrumpSignal
+emoji: 📊
+colorFrom: red
+colorTo: blue
+sdk: docker
+pinned: false
+---
+
 # TrumpSignal 📊
 
 An MLOps pipeline that ingests Trump's Truth Social posts and generates market impact signals.
