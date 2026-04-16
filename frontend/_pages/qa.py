@@ -35,7 +35,7 @@ def render(T: dict):
             impact_str = f"+{impact:.2f}%" if impact >= 0 else f"{impact:.2f}%"
             impact_color = "#1D9E75" if impact >= 0 else "#E24B4A"
 
-            relevance = round(score * 100, 0)
+            relevance = round(score, 0) if score <= 100 else round(score / 100, 0)
 
             with st.container(border=True):
                 # ── Header row ────────────────────────────────────────────────

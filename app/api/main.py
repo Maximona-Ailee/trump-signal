@@ -77,7 +77,28 @@ def qa(query: str, limit: int = 5):
         return {"error": "Search engine is still initializing. Please try again in a minute."}
     try:
         results = engine.search(query, top_k=limit)
-        return {"query": query, "results": results}
+        # Enrich results with stock data and URL from DB
+        enriched = []
+        conn = sqlite3.connect(DEFAULT_DB_PATH)
+        for r in results:
+            post_id = r["post"].get("post_id", "")
+            try:
+                row = pd.read_sql(
+                    "SELECT url, sp500_5min_before, sp500_5min_after, "
+                    "qqq_5min_before, qqq_5min_after, "
+                    "djt_5min_before, djt_5min_after, "
+                    "during_market_hours "
+                    "FROM truth_social WHERE post_id = ? LIMIT 1",
+                    conn, params=[str(post_id)]
+                )
+                if not row.empty:
+                    extra = row.iloc[0].where(pd.notnull(row.iloc[0]), None).to_dict()
+                    r["post"].update(extra)
+            except:
+                pass
+            enriched.append(r)
+        conn.close()
+        return {"query": query, "results": enriched}
     except Exception as e:
         return {"error": str(e)}
 
