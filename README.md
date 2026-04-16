@@ -90,7 +90,7 @@ python -m streamlit run frontend/streamlitapp.py
 ```
 
 ---
-
+```
 ## Project Structure
 trump-signal/
 ├── app/api/          # FastAPI endpoints
@@ -100,6 +100,7 @@ trump-signal/
 ├── tests/            # Unit tests
 ├── Dockerfile        # Container setup
 └── requirements.txt
+```
 ---
 
 ## Dataset
