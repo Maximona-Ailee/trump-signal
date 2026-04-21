@@ -47,7 +47,5 @@ data/trump_pulse.db
 backend/model_artifacts/*.pkl
 
 dataset_check.txt
-
 env_keys.txt
 
-env_keys.txt
