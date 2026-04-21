@@ -1,4 +1,6 @@
 """FastAPI application for TrumpPulse."""
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import math

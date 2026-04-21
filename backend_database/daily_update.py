@@ -50,7 +50,7 @@ def sync_task():
 def activate():
     """Activate the daily sync scheduler."""
     scheduler = BackgroundScheduler()
-    scheduler.add_job(sync_task, 'cron', hour=2, minute=0)
+    scheduler.add_job(sync_task, 'cron', hour=5, minute=0)
     print(f"Update scheduler started [Target: {DEFAULT_DB_PATH}]")
     print("Running in background...")
     try:
@@ -70,9 +70,9 @@ if __name__ == "__main__":
         print("One‑off sync completed. Exiting.")
         sys.exit(0)
 
-    # Scheduler mode (runs daily at 02:00)
+    # Scheduler mode (runs daily at 05:00)
     scheduler = BackgroundScheduler()
-    scheduler.add_job(sync_task, 'cron', hour=2, minute=0)
+    scheduler.add_job(sync_task, 'cron', hour=5, minute=0)
     print(f"Update scheduler started [Target: {DEFAULT_DB_PATH}]")
     print("Running in background...")
 
