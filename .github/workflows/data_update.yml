@@ -21,17 +21,12 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
-      - name: Download artifacts from HF Hub
+      - name: Initialize database
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
           TRUMPPULSE_DATA_DIR: backend_database
-        run: |
-          python backend/download_artifacts.py || python backend_database/init_db.py
-      - name: Verify artifacts downloaded
-        run: |
-          echo "Checking files..."
-          ls -la backend_database/
-          ls -la backend/model_artifacts/
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python backend_database/init_db.py
+
       - name: Pull new posts
         env:
           TRUMPPULSE_DATA_DIR: backend_database
