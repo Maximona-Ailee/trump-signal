@@ -21,17 +21,16 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
-      - name: Initialize database
+      - name: Remove old database
+        run: |
+          rm -f backend_database/trump_data.db
+          echo "Old database removed"
+
+      - name: Initialize fresh database
         env:
           TRUMPPULSE_DATA_DIR: backend_database
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python backend_database/init_db.py
-
-      - name: Pull new posts
-        env:
-          TRUMPPULSE_DATA_DIR: backend_database
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python backend_database/daily_update.py --once
 
       - name: Retrain model
         env:
