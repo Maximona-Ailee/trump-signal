@@ -96,10 +96,13 @@ def _get_market_status() -> tuple:
 def render(T: dict, tz_offset: int):
     # get dataset max date dynamically
     try:
-        import sqlite3
-        conn = sqlite3.connect('backend_database/trump_data.db')
-        ds_end = pd.to_datetime(conn.execute("SELECT MAX(date) FROM truth_social").fetchone()[0]).date()
-        conn.close()
+        import requests
+        from frontend.config import API_URL
+        r = requests.get(f"{API_URL}/data/available_dates", timeout=5)
+        if r.status_code == 200:
+        ds_end = pd.to_datetime(r.json()["max_date"]).date()
+    else:
+        ds_end = date.today()
     except:
         ds_end = date.today()
     today  = min(date.today(), ds_end)
