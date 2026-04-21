@@ -42,7 +42,7 @@ if not new_posts_df.empty:
     api.upload_file(
         path_or_fileobj=CACHE_PATH,
         path_in_repo="trump_embeddings.pkl",
-        repo_id="Rogersurf/trump-pulse-embeddings",
+        repo_id="Ailee52/trump-signal-artifacts",
         repo_type="dataset"
     )
     print("✅ Incremental embeddings updated and uploaded.")

@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from backend_database.embeddings import PostSearchEngine, CACHE_PATH
 from backend_database.init_db import DEFAULT_DB_PATH
 
-def upload_to_hf(cache_path: str, repo_id: str = "Rogersurf/trump-pulse-embeddings"):
+def upload_to_hf(cache_path: str, repo_id: str = "Ailee52/trump-signal-artifacts"):
     """Upload the embeddings pickle file to Hugging Face Dataset."""
     from huggingface_hub import HfApi
     api = HfApi()
