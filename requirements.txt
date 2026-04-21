@@ -17,3 +17,9 @@ apscheduler
 httpx
 websockets
 xgboost
+
+sentence-transformers
+
+sentence-transformers
+
+python-dotenv
