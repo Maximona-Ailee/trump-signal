@@ -31,8 +31,7 @@ def download():
             repo_id=HF_REPO,
             filename=filename,
             repo_type="dataset",
-            token=TOKEN
-        )
+            token=TOKEN if TOKEN else None)
         target_path = os.path.join(target_dir, filename)
         shutil.copy2(cached, target_path)
         print(f"Copied {cached} → {target_path}")
