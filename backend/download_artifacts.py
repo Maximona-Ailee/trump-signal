@@ -4,7 +4,7 @@ from huggingface_hub import hf_hub_download
 
 HF_REPO = "Ailee52/trump-signal-artifacts"
 TOKEN = os.environ.get("HF_TOKEN")
-DATA_DIR = os.environ.get("TRUMPPULSE_DATA_DIR", "/data/trump_pulse")
+DATA_DIR = os.environ.get("TRUMPPULSE_DATA_DIR", "backend_database")
 MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "model_artifacts")
 
 def download():
