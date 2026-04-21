@@ -32,7 +32,7 @@ class PostSearchEngine:
                 from huggingface_hub import hf_hub_download
                 print("[Embeddings] Local cache not found. Downloading from Hugging Face...")
                 downloaded_path = hf_hub_download(
-                    repo_id="Rogersurf/trump-pulse-embeddings",
+                    repo_id="Ailee52/trump-signal-artifacts",
                     filename="trump_embeddings.pkl",
                     repo_type="dataset",
                     local_dir=os.path.dirname(CACHE_PATH)
