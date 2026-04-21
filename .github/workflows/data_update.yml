@@ -25,7 +25,8 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           TRUMPPULSE_DATA_DIR: backend_database
-        run: python backend/download_artifacts.py
+        run: |
+          python backend/download_artifacts.py || python backend_database/init_db.py
       - name: Verify artifacts downloaded
         run: |
           echo "Checking files..."
