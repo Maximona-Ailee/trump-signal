@@ -94,18 +94,18 @@ def _get_market_status() -> tuple:
 
 
 def render(T: dict, tz_offset: int):
-    # get dataset max date dynamically
-try:
-    import requests
-    from frontend.config import API_URL
-    r = requests.get(f"{API_URL}/data/available_dates", timeout=5)
-    if r.status_code == 200:
-        ds_end = pd.to_datetime(r.json()["max_date"]).date()
-    else:
+    # get dataset max date dynamically via API — no hardcoded path
+    try:
+        import requests
+        from frontend.config import API_URL
+        r = requests.get(f"{API_URL}/data/available_dates", timeout=5)
+        if r.status_code == 200:
+            ds_end = pd.to_datetime(r.json()["max_date"]).date()
+        else:
+            ds_end = date.today()
+    except:
         ds_end = date.today()
-except:
-    ds_end = date.today()
-    today  = min(date.today(), ds_end)
+    today = min(date.today(), ds_end)
 
     # ── Live clock + market status ────────────────────────────────────────────
     clock_col, status_col, _ = st.columns([2, 2, 3])
