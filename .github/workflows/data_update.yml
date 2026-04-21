@@ -2,16 +2,18 @@ name: Daily Data Pipeline
 
 on:
   schedule:
-    - cron: '0 5 * * *'
-  workflow_dispatch:
+    - cron: '0 5 * * *'  # Every day at 5am UTC (after HF dataset updates at ~02:00-04:30 UTC)
+  workflow_dispatch:      # Manual trigger anytime
 
 jobs:
   update-pipeline:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -21,24 +23,75 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
-      - name: Remove old database
+      - name: Remove old artifacts
         run: |
           rm -f backend_database/trump_data.db
-          echo "Old database removed"
+          rm -f backend_database/trump_embeddings.pkl
+          echo "Old artifacts removed ✅"
 
       - name: Initialize fresh database
         env:
           TRUMPPULSE_DATA_DIR: backend_database
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python backend_database/init_db.py
+        run: |
+          python backend_database/init_db.py
+          echo "Database initialized ✅"
+
+      - name: Rebuild embeddings
+        env:
+          TRUMPPULSE_DATA_DIR: backend_database
+        run: |
+          python backend_database/build_embeddings.py
+          echo "Embeddings rebuilt ✅"
 
       - name: Retrain model
         env:
           TRUMPPULSE_DATA_DIR: backend_database
-        run: python backend/model_training.py
+        run: |
+          python backend/model_training.py
+          echo "Model retrained ✅"
+
+      - name: Save daily predictions
+        env:
+          TRUMPPULSE_DATA_DIR: backend_database
+        run: |
+          python backend/save_predictions.py
+          echo "Predictions saved ✅"
 
       - name: Upload artifacts to HF Hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           TRUMPPULSE_DATA_DIR: backend_database
-        run: python backend/upload_artifacts.py
+        run: |
+          python backend/upload_artifacts.py
+          echo "Artifacts uploaded ✅"
+
+      - name: Upload prediction log to HF Hub
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -c "
+          from huggingface_hub import HfApi
+          import os
+          if os.path.exists('artifacts/prediction_log.csv'):
+              api = HfApi(token=os.environ['HF_TOKEN'])
+              api.upload_file(
+                  path_or_fileobj='artifacts/prediction_log.csv',
+                  path_in_repo='prediction_log.csv',
+                  repo_id='Ailee52/trump-signal-artifacts',
+                  repo_type='dataset'
+              )
+              print('Prediction log uploaded to HF Hub ✅')
+          else:
+              print('No prediction log found, skipping...')
+          "
+
+      - name: Save evaluation artifacts to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-evaluation-run-${{ github.run_number }}
+          path: |
+            backend/model_artifacts/metrics.json
+            backend/model_artifacts/feature_cols.json
+            artifacts/prediction_log.csv
+          retention-days: 90
