@@ -105,7 +105,8 @@ def render(T: dict, tz_offset: int):
             ds_end = date.today()
     except:
         ds_end = date.today()
-    today = min(date.today(), ds_end)
+    actual_today = date.today()
+    today = min(actual_today, ds_end)
 
     # ── Live clock + market status ────────────────────────────────────────────
     clock_col, status_col, _ = st.columns([2, 2, 3])
@@ -176,7 +177,7 @@ def render(T: dict, tz_offset: int):
     posts = get_posts(str(selected_date), str(selected_date))
 
     if posts.empty:
-        if selected_date == today:
+        if selected_date == actual_today:
             st.info("🕐 Trump hasn't posted anything today yet.")
         else:
             st.info(f"📭 Trump didn't post anything on {selected_date.strftime('%d %b %Y')}.")
