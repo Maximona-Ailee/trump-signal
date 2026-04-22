@@ -7,7 +7,7 @@ sdk: docker
 pinned: false
 ---
 
-# TrumpSignal 📊
+# TrumpSignal 📊 updated version 2.0.0 (22/04/2025)
 
 An MLOps pipeline that ingests Trump's Truth Social posts and generates market impact signals.
 
@@ -26,22 +26,29 @@ An MLOps pipeline that ingests Trump's Truth Social posts and generates market i
 ---
 
 ## Live Demo
-
-[https://huggingface.co/spaces/Ailee52/trump-signal](https://huggingface.co/spaces/Ailee52/trump-signal)
+Live Demo
+🚀 https://huggingface.co/spaces/Ailee52/trump-signal
+📦 Artifacts Repository: https://huggingface.co/datasets/Ailee52/trump-signal-artifacts
 
 ---
 
 ## Pipeline
-
-| Step | Component | Description |
-|---|---|---|
-| 1 | HuggingFace Dataset | Source of Trump's Truth Social posts |
-| 2 | SQLite Database | Local storage, DVC tracked |
-| 3 | Embeddings Cache | MiniLM-L6-v2 vectors for semantic search |
-| 4 | XGBoost Classifier | Predicts next-day market impact |
-| 5 | FastAPI | Serves predictions and search via API |
-| 6 | Streamlit | Interactive frontend on port 7860 |
-
+chrissoria/trump-truth-social (HuggingFace Dataset)
+        ↓ updated daily by source
+GitHub Actions (5:00 AM UTC daily)
+        ↓
+1. init_db.py          → Pull fresh posts into SQLite
+2. build_embeddings.py → Rebuild MiniLM-L6-v2 vectors
+3. model_training.py   → Retrain XGBoost classifier
+4. save_predictions.py → Log daily predictions
+5. upload_artifacts.py → Push to Ailee52/trump-signal-artifacts
+        ↓
+HuggingFace Spaces (auto-restart)
+        ↓
+download_artifacts.py  → Download pre-built artifacts
+        ↓
+FastAPI (port 8000) + Streamlit (port 7860) via nginx```
+```
 ---
 
 ## Tech Stack
@@ -50,11 +57,12 @@ An MLOps pipeline that ingests Trump's Truth Social posts and generates market i
 |---|---|
 | Data | HuggingFace Datasets, SQLite, DVC |
 | ML | XGBoost, scikit-learn, sentence-transformers |
+| Storage | SQLite, HuggingFace Hub (Ailee52/trump-signal-artifacts) |
 | API | FastAPI, uvicorn |
 | Frontend | Streamlit |
 | Deployment | Docker, HuggingFace Spaces |
 | Scheduling | APScheduler, GitHub Actions |
-
+| Monitoring | FastAPI endpoints, GitHub Actions artifacts |
 ---
 
 ## Run Locally
@@ -93,12 +101,33 @@ python -m streamlit run frontend/streamlitapp.py
 ```
 ## Project Structure
 trump-signal/
-├── app/api/          # FastAPI endpoints
-├── backend/          # ML training and inference
-├── backend_database/ # Data ingestion and SQLite
-├── frontend/         # Streamlit pages
-├── tests/            # Unit tests
-├── Dockerfile        # Container setup
+├── app/
+│   └── api/
+│       ├── main.py          # FastAPI endpoints
+│       └── monitoring.py    # Prometheus metrics
+├── backend/
+│   ├── model_training.py    # XGBoost training pipeline
+│   ├── model_predict.py     # Inference
+│   ├── save_predictions.py  # Daily prediction logging
+│   ├── upload_artifacts.py  # Upload to HF Hub
+│   └── download_artifacts.py # Download from HF Hub
+├── backend_database/
+│   ├── init_db.py           # Initialize SQLite from HF dataset
+│   ├── daily_update.py      # Incremental updates
+│   ├── build_embeddings.py  # Build semantic search index
+│   ├── embeddings.py        # Search engine
+│   └── data_api.py          # Data access layer
+├── frontend/
+│   ├── streamlitapp.py      # Main app entry point
+│   ├── _pages/              # Page components
+│   ├── _data/               # API client
+│   └── _components/         # UI components
+├── .github/
+│   └── workflows/
+│       └── data_update.yml  # Daily pipeline (5am UTC)
+├── Dockerfile               # Container setup
+├── nginx.conf               # Reverse proxy config
+├── start.sh                 # Container startup script
 └── requirements.txt
 ```
 ---
