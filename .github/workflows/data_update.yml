@@ -9,9 +9,11 @@ jobs:
   update-pipeline:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -21,10 +23,11 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
-      - name: Remove old database
+      - name: Remove old artifacts
         run: |
           rm -f backend_database/trump_data.db
-          echo "Old database removed"
+          rm -f backend_database/trump_embeddings.pkl
+          echo "Old artifacts removed ✅"
 
       - name: Initialize fresh database
         env:
@@ -42,8 +45,23 @@ jobs:
           TRUMPPULSE_DATA_DIR: backend_database
         run: python backend/model_training.py
 
+      - name: Save daily predictions
+        env:
+          TRUMPPULSE_DATA_DIR: backend_database
+        run: python backend/save_predictions.py
+
       - name: Upload artifacts to HF Hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           TRUMPPULSE_DATA_DIR: backend_database
         run: python backend/upload_artifacts.py
+
+      - name: Save evaluation artifacts to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-evaluation-run-${{ github.run_number }}
+          path: |
+            backend/model_artifacts/metrics.json
+            backend/model_artifacts/feature_cols.json
+            artifacts/prediction_log.csv
+          retention-days: 90
