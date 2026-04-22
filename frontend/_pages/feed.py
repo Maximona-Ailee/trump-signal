@@ -136,7 +136,7 @@ def render(T: dict, tz_offset: int):
             key="feed_date",
             value=today,
             min_value=date(2022, 1, 1),
-            max_value=ds_end,
+            max_value=actual_today,
             format="DD/MM/YYYY",
         )
     with c2:
